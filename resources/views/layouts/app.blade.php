@@ -9,8 +9,8 @@
         ],
         [
             'label' => 'Tasks & Projects',
-            'route' => null,
-            'active' => false,
+            'route' => 'task-lists.index',
+            'active' => request()->routeIs('task-lists.*'),
             'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
         ],
         [
@@ -132,6 +132,22 @@
                 </header>
 
                 <main class="flex-1 overflow-y-auto">
+                    <div class="px-4 lg:px-6 pt-4 space-y-3">
+                        @if (session('status'))
+                            <x-alert type="success">{{ session('status') }}</x-alert>
+                        @endif
+
+                        @if ($errors->any())
+                            <x-alert type="error">
+                                <ul class="list-inside list-disc space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </x-alert>
+                        @endif
+                    </div>
+
                     @yield('content')
                 </main>
 
