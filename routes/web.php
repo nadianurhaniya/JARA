@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubtaskController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskListController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,9 +35,23 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::resource('task-lists', TaskListController::class)->except('show');
+
+    Route::resource('task-lists.tasks', TaskController::class)
+        ->except('show')
+        ->scoped(['task' => 'id']);
+
+    Route::patch('task-lists/{taskList}/tasks/{task}/toggle-complete', [TaskController::class, 'toggleComplete'])
+        ->name('tasks.toggle-complete');
+
+    Route::post('tasks/{task}/subtasks', [SubtaskController::class, 'store'])->name('subtasks.store');
+    Route::patch('subtasks/{subtask}', [SubtaskController::class, 'update'])->name('subtasks.update');
+    Route::patch('subtasks/{subtask}/toggle-complete', [SubtaskController::class, 'toggleComplete'])->name('subtasks.toggle-complete');
+    Route::delete('subtasks/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -42,4 +59,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('users', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::patch('users/{user}/status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard.index');
 });
