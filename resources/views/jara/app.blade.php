@@ -15,6 +15,7 @@
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
             ]);
+            window.JARA_INITIAL_TAB = @json($tab ?? 'members');
         </script>
 
         <noscript>

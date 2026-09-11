@@ -18,3 +18,28 @@ test('tamu diarahkan ke halaman login saat mengakses /jara', function () {
 
     $response->assertRedirect(route('login'));
 });
+
+test('route tab kolaborasi dapat diakses pengguna yang login', function () {
+    $user = User::factory()->create();
+
+    $routes = [
+        'jara.members' => 'members',
+        'jara.invitations' => 'invitations',
+        'jara.tasks' => 'tasks',
+    ];
+
+    foreach ($routes as $name => $tab) {
+        $response = $this->actingAs($user)->get(route($name));
+
+        $response->assertOk();
+        $response->assertSee('jara-app');
+        $response->assertSee('JARA_INITIAL_TAB', false);
+        $response->assertSee('"'.$tab.'"', false);
+    }
+});
+
+test('tamu diarahkan ke halaman login saat mengakses route tab kolaborasi', function () {
+    foreach (['jara.members', 'jara.invitations', 'jara.tasks'] as $name) {
+        $this->get(route($name))->assertRedirect(route('login'));
+    }
+});

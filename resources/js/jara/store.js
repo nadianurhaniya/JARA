@@ -7,7 +7,7 @@ const state = {
     tasks: structuredClone(TASKS),
     notifications: structuredClone(NOTIFICATIONS),
     activeProjectId: PROJECTS[0].id,
-    activeTab: 'members',
+    activeTab: initialTab(),
     inviteModal: false,
     inviteError: null,
     inviteSuccess: null,
@@ -21,6 +21,13 @@ const state = {
     newProjectColor: '#0BC5C1',
     toast: null,
 };
+
+const TABS = ['members', 'invitations', 'tasks'];
+
+function initialTab() {
+    const tab = typeof window !== 'undefined' ? window.JARA_INITIAL_TAB : null;
+    return TABS.includes(tab) ? tab : 'members';
+}
 
 const listeners = new Set();
 
@@ -516,6 +523,7 @@ export function setActiveProject(projectId) {
 }
 
 export function setActiveTab(tab) {
+    if (!TABS.includes(tab)) return;
     state.activeTab = tab;
     emit();
 }
