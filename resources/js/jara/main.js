@@ -1,12 +1,17 @@
-import { subscribe, getState } from './store.js';
+import { subscribe, getState, ensureSession } from './store.js';
 
 import * as actions from './store.js';
 import { renderCollaborationLayout, renderModals } from './collaboration.js';
 import { renderSidebar, renderHeader, stateUI } from './ui.js';
 
-const root = document.getElementById('jara-app');
+function getRoot() {
+    return document.getElementById('jara-app');
+}
 
 function render() {
+    const root = getRoot();
+    if (!root) return;
+    ensureSession();
     const state = getState();
 
     if (!state.currentUserId) {
@@ -62,8 +67,18 @@ function escapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
-subscribe(render);
-render();
+function initCollaboration() {
+    const root = getRoot();
+    if (!root) return;
+    subscribe(render);
+    render();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCollaboration, { once: true });
+} else {
+    initCollaboration();
+}
 
 // Klik pada backdrop (di luar konten modal) selalu menutup modal.
 // Klik di dalam konten hanya menutup bila menekan kontrol eksplisit
@@ -74,6 +89,7 @@ function shouldCloseModal(event, target) {
 }
 
 document.body.addEventListener('click', (event) => {
+    if (!getRoot()) return;
     const target = event.target.closest('[data-action]');
     if (!target) return;
 
@@ -155,6 +171,7 @@ document.body.addEventListener('click', (event) => {
 });
 
 document.body.addEventListener('change', (event) => {
+    if (!getRoot()) return;
     const select = event.target.closest('[data-action]');
     if (!select) return;
 
@@ -166,6 +183,7 @@ document.body.addEventListener('change', (event) => {
 });
 
 document.body.addEventListener('submit', (event) => {
+    if (!getRoot()) return;
     if (event.target.dataset.form === 'new-project') {
         event.preventDefault();
         const formData = new FormData(event.target);

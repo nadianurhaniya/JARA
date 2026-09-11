@@ -5,11 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>JARA — Collaboration</title>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="bg-[#F0FAFA] text-[#1E293B]">
-        <div id="jara-app"></div>
-
         <script>
             window.JARA_SESSION_USER = @json([
                 'name' => auth()->user()->name,
@@ -17,6 +12,10 @@
             ]);
             window.JARA_INITIAL_TAB = @json($tab ?? 'members');
         </script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="bg-[#F0FAFA] text-[#1E293B]">
+        <div id="jara-app"></div>
 
         <noscript>
             <div class="p-6 text-center text-sm text-[#64748B]">
