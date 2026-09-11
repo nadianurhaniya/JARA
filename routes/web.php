@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::prefix('jara')->name('jara.')->group(function () {
+    Route::prefix('teamcollaboration')->name('teamcollaboration.')->group(function () {
         Route::get('', function () {
             return view('jara.app');
         })->name('app');
