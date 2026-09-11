@@ -25,3 +25,11 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+docs/
+SRS*.md
+
+# Local Lerd environment (not used by the team)
+.lerd.yaml
+.env.before_lerd
+.node-version
+.php-version

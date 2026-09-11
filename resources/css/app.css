@@ -5,14 +5,76 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-display: 'Nunito', ui-sans-serif, system-ui, sans-serif;
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Nunito', ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
 body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: #f0fafa;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+    font-family: var(--font-display);
+}
+
+/* Slim scrollbars, matching the reference dashboard feel */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+input,
+textarea,
+select,
+button {
+    font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    a,
+    button,
+    input,
+    select,
+    [role='button'] {
+        transition-property: background-color, border-color, color, opacity, transform, box-shadow;
+        transition-duration: 150ms;
+        transition-timing-function: ease;
+    }
 }
 
 #jara-app {
