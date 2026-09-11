@@ -151,13 +151,7 @@
                     @yield('content')
                 </main>
 
-                <footer class="px-4 py-2 border-t border-[#E2E8F0] bg-white flex items-center justify-between gap-3 shrink-0">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="w-2 h-2 rounded-full shrink-0 {{ $user->is_active ? 'bg-[#10B981]' : 'bg-[#94A3B8]' }}"></span>
-                        <span class="text-xs text-[#94A3B8] truncate">
-                            Logged in as <strong class="text-[#64748B]">{{ $user->name }}</strong> · {{ $user->isAdmin() ? 'Administrator' : 'Member' }}
-                        </span>
-                    </div>
+                <footer class="px-4 py-2 border-t border-[#E2E8F0] bg-white flex items-center justify-end gap-3 shrink-0">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-xs text-[#94A3B8] hover:text-red-500 flex items-center gap-1">

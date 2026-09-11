@@ -78,7 +78,8 @@ button {
 }
 
 #jara-app {
-    height: 100%;
+    width: 100%;
+    min-height: 100%;
 }
 
 .jara-scroll::-webkit-scrollbar {
