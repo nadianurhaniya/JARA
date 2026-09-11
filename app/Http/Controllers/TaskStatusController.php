@@ -12,7 +12,8 @@ class TaskStatusController extends Controller
 {
     /**
      * Change the completion status of the specified task.
-     * Owners may change any task; members only tasks assigned to them.
+     * FR-23: only the assignee may change status; owner is read-only
+     * for member tasks (monitoring + assignment only).
      */
     public function update(UpdateTaskStatusRequest $request, TaskList $taskList, Task $task): JsonResponse
     {

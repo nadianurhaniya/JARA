@@ -17,15 +17,15 @@ export function avatarInitials(name) {
 
 export function roleBadge(role) {
     if (role === 'owner') {
-        return '<span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[#FEF3C7] text-[#D97706]">Owner</span>';
+        return '<span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[#FEF3C7] text-[#D97706]">Pemilik</span>';
     }
-    return '<span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[#E8F9F9] text-[#0BC5C1]">Member</span>';
+    return '<span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[#E8F9F9] text-[#0BC5C1]">Anggota</span>';
 }
 
 export function statusBadge(status) {
     const map = {
-        not_started: { label: 'Not Started', bg: '#F1F5F9', fg: '#94A3B8' },
-        in_progress: { label: 'In Progress', bg: '#E8F9F9', fg: '#0BC5C1' },
+        not_started: { label: 'Belum Dimulai', bg: '#F1F5F9', fg: '#94A3B8' },
+        in_progress: { label: 'Sedang Berjalan', bg: '#E8F9F9', fg: '#0BC5C1' },
         completed: { label: 'Selesai', bg: '#ECFDF5', fg: '#065F46' },
     };
     const cfg = map[status] ?? map.not_started;
@@ -34,9 +34,9 @@ export function statusBadge(status) {
 
 export function priorityBadge(priority) {
     const map = {
-        high: { label: 'High', bg: '#FEF2F2', fg: '#EF4444' },
-        medium: { label: 'Medium', bg: '#FFFBEB', fg: '#F59E0B' },
-        low: { label: 'Low', bg: '#ECFDF5', fg: '#10B981' },
+        high: { label: 'Tinggi', bg: '#FEF2F2', fg: '#EF4444' },
+        medium: { label: 'Sedang', bg: '#FFFBEB', fg: '#F59E0B' },
+        low: { label: 'Rendah', bg: '#ECFDF5', fg: '#10B981' },
     };
     const cfg = map[priority] ?? map.medium;
     return `<span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:${cfg.bg};color:${cfg.fg}">${cfg.label}</span>`;
@@ -48,9 +48,9 @@ export function avatar(user, size = 'w-10 h-10 text-xs') {
 
 export function inviteBadge(status) {
     const map = {
-        pending: { label: 'Pending', bg: 'bg-[#FEF9C3] text-[#92400E]' },
-        accepted: { label: 'Accepted', bg: 'bg-[#ECFDF5] text-[#065F46]' },
-        rejected: { label: 'Rejected', bg: 'bg-red-50 text-red-600' },
+        pending: { label: 'Tertunda', bg: 'bg-[#FEF9C3] text-[#92400E]' },
+        accepted: { label: 'Diterima', bg: 'bg-[#ECFDF5] text-[#065F46]' },
+        rejected: { label: 'Ditolak', bg: 'bg-red-50 text-red-600' },
     };
     const cfg = map[status] ?? map.pending;
     return `<span class="text-xs px-2.5 py-1 rounded-full font-medium ${cfg.bg}">${cfg.label}</span>`;
@@ -110,10 +110,10 @@ function projectRoleName() {
     if (!user) return '';
     const { activeProjectId } = getState();
     const role = activeProjectId ? projectRole(activeProjectId, user.id) : null;
-    if (role === 'owner') return 'Owner';
-    if (role === 'member') return 'Member';
+    if (role === 'owner') return 'Pemilik';
+    if (role === 'member') return 'Anggota';
     if (user.role === 'admin') return 'Administrator';
-    return 'Member';
+    return 'Anggota';
 }
 
 export function renderHeader(activeProject) {

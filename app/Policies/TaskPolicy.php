@@ -57,14 +57,11 @@ class TaskPolicy
 
     /**
      * Determine whether the user can change the completion status.
-     * Owners may change any task; members only tasks assigned to them.
+     * FR-23: only the assignee may change status (owner is read-only
+     * for member tasks, monitoring + assignment only).
      */
     public function updateStatus(User $user, Task $task): bool
     {
-        if ($task->taskList->isOwner($user)) {
-            return true;
-        }
-
         return $task->assignee_id === $user->id && $user->isActive();
     }
 }
