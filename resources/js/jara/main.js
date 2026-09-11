@@ -65,10 +65,10 @@ document.body.addEventListener('click', (event) => {
 
     switch (action) {
         case 'login':
-            login(target.dataset.user);
+            actions.login(target.dataset.user);
             break;
         case 'logout':
-            logout();
+            actions.logout();
             break;
         case 'toggle-notif':
             stateUI.notifOpen = !stateUI.notifOpen;

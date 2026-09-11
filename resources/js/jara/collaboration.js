@@ -323,7 +323,7 @@ function renderTasksTab(project) {
                                 </label>
                             ` : ''}
 
-                            ${task.assigneeId ? `
+                            ${task.assigneeId && assignee ? `
                                 <div class="flex items-center gap-2 shrink-0">
                                     ${avatar(assignee, 'w-7 h-7 text-xs')}
                                     <span class="text-xs text-[#64748B] hidden sm:inline">${escapeHtml(assignee.name.split(' ')[0])}</span>
