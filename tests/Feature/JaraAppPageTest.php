@@ -43,3 +43,12 @@ test('tamu diarahkan ke halaman login saat mengakses route tab kolaborasi', func
         $this->get(route($name))->assertRedirect(route('login'));
     }
 });
+
+test('sidebar dashboard memuat tautan team collaboration', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertSee(route('jara.app'), false);
+});
