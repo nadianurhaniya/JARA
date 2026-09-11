@@ -46,4 +46,29 @@ class TaskListPolicy
     {
         return $user->id === $taskList->user_id;
     }
+
+    /**
+     * Determine whether the user can view the collaboration area
+     * (members, invitations, assignments) of the model.
+     */
+    public function viewCollaboration(User $user, TaskList $taskList): bool
+    {
+        return $taskList->isOwner($user) || $taskList->isMember($user);
+    }
+
+    /**
+     * Determine whether the user can invite members to the model.
+     */
+    public function inviteMember(User $user, TaskList $taskList): bool
+    {
+        return $taskList->isOwner($user);
+    }
+
+    /**
+     * Determine whether the user can remove members from the model.
+     */
+    public function removeMember(User $user, TaskList $taskList): bool
+    {
+        return $taskList->isOwner($user);
+    }
 }

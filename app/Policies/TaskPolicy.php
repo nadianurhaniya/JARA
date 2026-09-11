@@ -46,4 +46,25 @@ class TaskPolicy
     {
         return $user->id === $task->user_id;
     }
+
+    /**
+     * Determine whether the user can assign the model to a member.
+     */
+    public function assign(User $user, Task $task): bool
+    {
+        return $task->taskList->isOwner($user);
+    }
+
+    /**
+     * Determine whether the user can change the completion status.
+     * Owners may change any task; members only tasks assigned to them.
+     */
+    public function updateStatus(User $user, Task $task): bool
+    {
+        if ($task->taskList->isOwner($user)) {
+            return true;
+        }
+
+        return $task->assignee_id === $user->id && $user->isActive();
+    }
 }
