@@ -40,6 +40,11 @@ class Task extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function assignee(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assignee_id');
+    }
+
     public function subtasks(): HasMany
     {
         return $this->hasMany(Subtask::class)->orderBy('position');

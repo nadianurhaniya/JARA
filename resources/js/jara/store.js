@@ -1,5 +1,12 @@
 import { USERS, PROJECTS, TASKS, NOTIFICATIONS } from './mock.js';
 
+const TABS = ['members', 'invitations', 'tasks'];
+
+function initialTab() {
+    const tab = typeof window !== 'undefined' ? window.JARA_INITIAL_TAB : null;
+    return TABS.includes(tab) ? tab : 'members';
+}
+
 const state = {
     currentUserId: null,
     users: structuredClone(USERS),
@@ -21,13 +28,6 @@ const state = {
     newProjectColor: '#0BC5C1',
     toast: null,
 };
-
-const TABS = ['members', 'invitations', 'tasks'];
-
-function initialTab() {
-    const tab = typeof window !== 'undefined' ? window.JARA_INITIAL_TAB : null;
-    return TABS.includes(tab) ? tab : 'members';
-}
 
 const listeners = new Set();
 
