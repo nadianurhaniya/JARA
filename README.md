@@ -1,58 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JARA — Advanced To-Do List
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Deskripsi
 
-## About Laravel
+JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupun tim. Pengguna dapat membuat daftar atau proyek, mengelompokkan tugas, menetapkan prioritas dan tenggat waktu, menandai tugas sebagai selesai, berkolaborasi dengan pengguna lain, serta memantau progres penyelesaian tugas. Admin bertanggung jawab menambah dan menghapus akun pengguna dalam sistem.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Membuat dan mengelompokkan tugas ke dalam beberapa daftar atau proyek
+- Menetapkan prioritas dan tenggat waktu pada tugas
+- Menandai tugas sebagai selesai
+- Menambahkan pengguna lain ke dalam daftar/proyek untuk dikerjakan bersama
+- Memantau progres penyelesaian tugas
+- Manajemen akun pengguna oleh admin
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Aktor Sistem
 
-## Learning Laravel
+| Aktor | Deskripsi |
+|---|---|
+| Admin | Mengelola akun pengguna di dalam sistem (tambah/hapus) |
+| User (Pemilik Daftar/Proyek) | Membuat daftar/proyek, tugas, dan mengundang anggota |
+| User (Anggota/Kolaborator) | Mengerjakan tugas yang dibagikan kepadanya |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Alur Penggunaan Singkat
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Pengguna mendaftar dan login ke sistem.
+2. Pengguna membuat daftar atau proyek baru.
+3. Pengguna menambahkan tugas ke dalam daftar/proyek tersebut, lengkap dengan prioritas dan tenggat waktu.
+4. Pemilik dapat mengundang pengguna lain untuk mengerjakan tugas bersama.
+5. Setiap tugas dapat ditandai selesai setelah dikerjakan.
+6. Progres penyelesaian tugas dapat dipantau melalui dashboard.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Software Requirements Specification (SRS)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Modul Autentikasi & Manajemen Akun (Admin)
 
-```bash
-composer require laravel/boost --dev
+| ID | Kebutuhan Fungsional |
+|---|---|
+| FR-01 | Sistem harus menyediakan fitur registrasi akun pengguna baru (email, password, nama) |
+| FR-02 | Sistem harus menyediakan fitur login/logout dengan autentikasi (email & password) |
+| FR-03 | Sistem harus menyediakan fitur reset password |
+| FR-04 | Admin dapat menambahkan akun pengguna baru ke dalam sistem |
+| FR-05 | Admin dapat menghapus (menonaktifkan) akun pengguna dari sistem |
+| FR-06 | Admin dapat melihat daftar seluruh pengguna terdaftar beserta statusnya (aktif/nonaktif) |
+| FR-07 | Sistem harus membedakan hak akses (role) antara Admin dan User biasa |
+| FR-08 | Sistem harus mencatat log aktivitas admin terkait manajemen akun (opsional, untuk audit) |
 
-php artisan boost:install
-```
+### Modul Manajemen Tugas & Daftar/Proyek
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+| ID | Kebutuhan Fungsional |
+|---|---|
+| FR-09 | User dapat membuat daftar/proyek baru untuk mengelompokkan tugas |
+| FR-10 | User dapat mengedit atau menghapus daftar/proyek yang dimilikinya |
+| FR-11 | User dapat menambahkan tugas baru ke dalam suatu daftar/proyek |
+| FR-12 | User dapat mengedit detail tugas (judul, deskripsi, sub-tugas) |
+| FR-13 | User dapat menghapus tugas |
+| FR-14 | User dapat menetapkan prioritas tugas (misal: Tinggi/Sedang/Rendah) |
+| FR-15 | User dapat menetapkan tenggat waktu (deadline) pada tugas |
+| FR-16 | User dapat menandai tugas sebagai "selesai" atau "belum selesai" |
+| FR-17 | Sistem harus menampilkan tugas terurut berdasarkan prioritas dan/atau tenggat waktu |
+| FR-18 | Sistem harus memberi notifikasi/pengingat saat tenggat waktu tugas mendekat (opsional) |
 
-## Contributing
+### Modul Kolaborasi & Kepemilikan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| ID | Kebutuhan Fungsional |
+|---|---|
+| FR-19 | Pemilik daftar/proyek dapat mengundang/menambahkan pengguna lain ke dalam daftar tersebut |
+| FR-20 | Pemilik dapat menghapus anggota dari daftar/proyeknya |
+| FR-21 | Anggota yang diundang dapat menerima/menolak undangan kolaborasi |
+| FR-22 | Sistem harus mendukung penugasan tugas spesifik ke anggota tertentu (assignee) |
+| FR-23 | Anggota kolaborator dapat mengubah status tugas yang ditugaskan kepadanya (selesai/belum) |
+| FR-24 | Sistem harus membatasi hak akses anggota (misal: tidak dapat menghapus daftar/proyek, hanya pemilik yang bisa) |
+| FR-25 | Sistem harus menampilkan daftar anggota beserta perannya dalam suatu proyek |
+| FR-26 | Sistem harus mengirim notifikasi saat pengguna ditambahkan/ditugaskan ke suatu tugas |
 
-## Code of Conduct
+### Modul Monitoring Progres & Dashboard
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| ID | Kebutuhan Fungsional |
+|---|---|
+| FR-27 | Sistem harus menampilkan dashboard ringkasan progres tugas per daftar/proyek |
+| FR-28 | Sistem harus menampilkan persentase penyelesaian tugas (progress bar) |
+| FR-29 | Sistem harus menampilkan jumlah tugas berdasarkan status (belum, sedang berjalan, selesai) |
+| FR-30 | Pemilik proyek dapat melihat progres kerja tiap anggota tim dalam proyeknya |
+| FR-31 | Sistem harus menyediakan filter progres berdasarkan rentang waktu (mingguan/bulanan) |
+| FR-32 | Sistem harus menampilkan visualisasi progres (grafik/chart) untuk memudahkan pemantauan |
+| FR-33 | Sistem dapat mengekspor laporan progres (opsional: PDF/Excel) |
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
