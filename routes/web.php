@@ -17,10 +17,6 @@ Route::get('/', function () {
         : redirect()->route('login');
 });
 
-Route::get('/jara', function () {
-    return view('jara.app');
-})->name('jara.app');
-
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store'])->name('register.store');
@@ -38,6 +34,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('jara', function () {
+        return view('jara.app');
+    })->name('jara.app');
 
     Route::resource('task-lists', TaskListController::class)->except('show');
 
