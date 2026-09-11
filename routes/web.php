@@ -35,6 +35,24 @@ Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+    Route::prefix('jara')->name('jara.')->group(function () {
+        Route::get('/', function () {
+            return view('jara.app');
+        })->name('app');
+
+        Route::get('/members', function () {
+            return view('jara.app', ['tab' => 'members']);
+        })->name('members');
+
+        Route::get('/invitations', function () {
+            return view('jara.app', ['tab' => 'invitations']);
+        })->name('invitations');
+
+        Route::get('/tasks', function () {
+            return view('jara.app', ['tab' => 'tasks']);
+        })->name('tasks');
+    });
+
     Route::resource('task-lists', TaskListController::class)->except('show');
 
     Route::resource('task-lists.tasks', TaskController::class)
@@ -55,8 +73,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('users', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::patch('users/{user}/status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
 });
