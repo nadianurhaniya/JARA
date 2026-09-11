@@ -3,7 +3,7 @@
     'monthlyData' => [],
 ])
 
-<div class="bg-white rounded-2xl p-6 border border-[#E2E8F0]" x-data="{ timeRange: 'weekly' }">
+<div {{ $attributes->class('bg-white rounded-2xl p-6 border border-[#E2E8F0]') }} x-data="{ timeRange: 'weekly' }">
     <div class="flex items-center justify-between mb-5">
         <h3 class="font-bold text-sm text-[#1E293B]" style="font-family: 'Nunito', sans-serif">Task Completion Trend</h3>
         <div class="flex bg-[#F1F5F9] rounded-lg p-0.5">

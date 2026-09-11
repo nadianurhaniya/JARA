@@ -219,40 +219,42 @@
                 </div>
 
                 <!-- Charts row -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div class="lg:col-span-2">
-                        <x-dashboard.progress-trend
-                            :weeklyData="[
-                                ['label' => 'Aug W1', 'completed' => 4, 'created' => 6],
-                                ['label' => 'Aug W2', 'completed' => 7, 'created' => 8],
-                                ['label' => 'Aug W3', 'completed' => 5, 'created' => 5],
-                                ['label' => 'Aug W4', 'completed' => 9, 'created' => 10],
-                                ['label' => 'Sep W1', 'completed' => 6, 'created' => 7],
-                                ['label' => 'Sep W2', 'completed' => 3, 'created' => 4],
-                            ]"
-                            :monthlyData="[
-                                ['label' => 'Apr', 'completed' => 12, 'created' => 15],
-                                ['label' => 'May', 'completed' => 18, 'created' => 20],
-                                ['label' => 'Jun', 'completed' => 22, 'created' => 25],
-                                ['label' => 'Jul', 'completed' => 28, 'created' => 30],
-                                ['label' => 'Aug', 'completed' => 25, 'created' => 28],
-                                ['label' => 'Sep', 'completed' => 9, 'created' => 11],
-                            ]"
-                        />
-                    </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+                    <x-dashboard.progress-trend
+                        class="h-full"
+                        :weeklyData="[
+                            ['label' => 'Aug W1', 'completed' => 4, 'created' => 6],
+                            ['label' => 'Aug W2', 'completed' => 7, 'created' => 8],
+                            ['label' => 'Aug W3', 'completed' => 5, 'created' => 5],
+                            ['label' => 'Aug W4', 'completed' => 9, 'created' => 10],
+                            ['label' => 'Sep W1', 'completed' => 6, 'created' => 7],
+                            ['label' => 'Sep W2', 'completed' => 3, 'created' => 4],
+                        ]"
+                        :monthlyData="[
+                            ['label' => 'Apr', 'completed' => 12, 'created' => 15],
+                            ['label' => 'May', 'completed' => 18, 'created' => 20],
+                            ['label' => 'Jun', 'completed' => 22, 'created' => 25],
+                            ['label' => 'Jul', 'completed' => 28, 'created' => 30],
+                            ['label' => 'Aug', 'completed' => 25, 'created' => 28],
+                            ['label' => 'Sep', 'completed' => 9, 'created' => 11],
+                        ]"
+                    />
 
-                    <div class="space-y-4 flex flex-col">
-                        <x-dashboard.task-status-chart
-                            :completed="12"
-                            :inProgress="7"
-                            :notStarted="5"
-                        />
-                        <x-dashboard.priority-distribution :priorities="[
+                    <x-dashboard.task-status-chart
+                        class="h-full"
+                        :completed="12"
+                        :inProgress="7"
+                        :notStarted="5"
+                    />
+
+                    <x-dashboard.priority-distribution
+                        class="h-full"
+                        :priorities="[
                             ['name' => 'High', 'value' => 7, 'color' => '#EF4444'],
                             ['name' => 'Medium', 'value' => 4, 'color' => '#F59E0B'],
                             ['name' => 'Low', 'value' => 2, 'color' => '#10B981'],
-                        ]" />
-                    </div>
+                        ]"
+                    />
                 </div>
 
                 <!-- Member progress + Activity + Upcoming -->

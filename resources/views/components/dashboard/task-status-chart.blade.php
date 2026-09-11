@@ -24,7 +24,7 @@
     $notStartedRotation = (($completedPct + $inProgressPct) / 100) * 360;
 @endphp
 
-<div class="bg-white rounded-2xl p-6 border border-[#E2E8F0]">
+<div {{ $attributes->class('bg-white rounded-2xl p-6 border border-[#E2E8F0]') }}>
     <h3 class="font-bold text-sm text-[#1E293B] mb-5" style="font-family: 'Nunito', sans-serif">Task Status Distribution</h3>
     <div class="flex justify-center mb-4">
         <div class="relative w-40 h-40">
