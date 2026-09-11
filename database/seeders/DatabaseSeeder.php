@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Subtask;
 use App\Models\Task;
 use App\Models\TaskList;
@@ -18,21 +19,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory()->admin()->create([
+            'name' => 'Arya Santoso',
+            'email' => 'admin@jara.app',
+        ]);
 
-        $user = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $budi = User::factory()->create([
+            'name' => 'Budi Hartono',
+            'email' => 'budi@jara.app',
+        ]);
+
+        User::factory()->inactive()->create([
+            'name' => 'Dian Permata',
+            'email' => 'dian@jara.app',
+        ]);
+
+        User::factory()->create([
+            'name' => 'Citra Dewi',
+            'email' => 'citra@jara.app',
+            'role' => UserRole::User,
         ]);
 
         if (app()->environment('local')) {
             TaskList::factory()
                 ->count(3)
-                ->for($user, 'owner')
+                ->for($budi, 'owner')
                 ->has(
                     Task::factory()
                         ->count(5)
-                        ->for($user, 'owner')
+                        ->for($budi, 'owner')
                         ->has(Subtask::factory()->count(2), 'subtasks')
                 )
                 ->create();
