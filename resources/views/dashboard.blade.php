@@ -28,6 +28,22 @@
             </div>
         </div>
 
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h3 class="font-display font-bold text-lg text-[#1E293B]">Team Collaboration</h3>
+                <p class="text-sm text-[#64748B] mt-1">Lihat proyek, kelola anggota, undangan, dan assignment tugas.</p>
+            </div>
+            <a
+                href="{{ route('jara.app') }}"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0BC5C1] text-white text-sm font-semibold hover:bg-[#0AAEAA] shrink-0"
+            >
+                Buka Kolaborasi
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+            </a>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             @foreach ($cards as $card)
                 <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5">
