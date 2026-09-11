@@ -129,6 +129,16 @@ document.body.addEventListener('click', (event) => {
             if (stop) return;
             actions.closeNewTaskModal();
             break;
+        case 'open-new-project':
+            actions.openNewProjectModal();
+            break;
+        case 'close-new-project':
+            if (stop) return;
+            actions.closeNewProjectModal();
+            break;
+        case 'pick-project-color':
+            actions.setNewProjectColor(target.dataset.color);
+            break;
         default:
             break;
     }
@@ -146,6 +156,16 @@ document.body.addEventListener('change', (event) => {
 });
 
 document.body.addEventListener('submit', (event) => {
+    if (event.target.dataset.form === 'new-project') {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        actions.createProject({
+            name: formData.get('name'),
+            description: formData.get('description'),
+            deadline: formData.get('deadline'),
+        });
+        return;
+    }
     if (event.target.dataset.form !== 'new-task') return;
     event.preventDefault();
     const formData = new FormData(event.target);

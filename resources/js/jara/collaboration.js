@@ -43,7 +43,13 @@ function renderProjectSidebar(projects, myInvites) {
 
     return `
         <div class="w-56 shrink-0 border-r border-[#E2E8F0] bg-white p-4 overflow-y-auto jara-scroll">
-            <h3 class="font-display font-bold text-xs text-[#94A3B8] uppercase tracking-wide mb-3">Projects</h3>
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-display font-bold text-xs text-[#94A3B8] uppercase tracking-wide">Projects</h3>
+                <button data-action="open-new-project" title="Buat proyek baru"
+                    class="w-6 h-6 rounded-lg bg-[#E8F9F9] text-[#0BC5C1] flex items-center justify-center hover:bg-[#0BC5C1] hover:text-white">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+            </div>
             ${projects.length === 0
                 ? '<p class="text-xs text-[#94A3B8] px-1">Belum ada proyek untuk kamu.</p>'
                 : projects.map((p) => `
@@ -89,7 +95,12 @@ function renderNoProject() {
                     <svg viewBox="0 0 24 24" fill="none" stroke="#0BC5C1" stroke-width="1.5" class="w-7 h-7"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                 </div>
                 <p class="font-display font-bold text-[#1E293B]">Kamu belum memiliki akses proyek</p>
-                <p class="text-sm text-[#94A3B8] mt-1">Terima undangan untuk bergabung dengan proyek.</p>
+                <p class="text-sm text-[#94A3B8] mt-1">Terima undangan untuk bergabung, atau buat proyek baru.</p>
+                <button data-action="open-new-project"
+                    class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0BC5C1] text-white text-xs font-semibold hover:bg-[#0AAEAA]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M12 5v14M5 12h14"/></svg>
+                    Buat Proyek
+                </button>
             </div>
         </div>
     `;
@@ -365,13 +376,16 @@ function statusColor(status) {
 export function renderModals() {
     const state = getState();
     const project = state.projects.find((p) => p.id === state.activeProjectId);
-    if (!project) return '';
+    if (!project) {
+        return state.newProjectModal ? renderNewProjectModal() : '';
+    }
 
     return `
         ${state.inviteModal ? renderInviteModal(project) : ''}
         ${state.newTaskModal ? renderNewTaskModal() : ''}
         ${state.removeTarget ? renderRemoveModal(project) : ''}
         ${state.deleteProjectConfirm ? renderDeleteProjectModal(project) : ''}
+        ${state.newProjectModal ? renderNewProjectModal() : ''}
     `;
 }
 
@@ -518,6 +532,56 @@ function renderDeleteProjectModal(project) {
                     <button data-action="close-delete-project" class="flex-1 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#64748B] hover:bg-[#F8FAFC]">Cancel</button>
                     <button data-action="confirm-delete-project" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600">Delete</button>
                 </div>
+            </div>
+        </div>
+    `;
+}
+
+const PROJECT_COLORS = ['#0BC5C1', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#3B82F6', '#EC4899'];
+
+function renderNewProjectModal() {
+    const state = getState();
+    return `
+        <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" data-action="close-new-project">
+            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl" data-stop>
+                <div class="p-6 border-b border-[#E2E8F0] flex items-center justify-between">
+                    <h2 class="font-display font-bold text-lg text-[#1E293B]">New Project</h2>
+                    <button data-action="close-new-project" class="text-[#94A3B8] hover:text-[#64748B]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <form data-form="new-project" class="p-6 space-y-4">
+                    <div>
+                        <label class="text-xs font-semibold text-[#475569] uppercase tracking-wide block mb-1.5">Project Name *</label>
+                        <input name="name" type="text" placeholder="Project name..." autocomplete="off"
+                            class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#1E293B] outline-none focus:ring-2 focus:ring-[#0BC5C1]/30 focus:border-[#0BC5C1]" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-[#475569] uppercase tracking-wide block mb-1.5">Description</label>
+                        <textarea name="description" rows="2" placeholder="What is this project about?"
+                            class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#1E293B] outline-none focus:ring-2 focus:ring-[#0BC5C1]/30 focus:border-[#0BC5C1] resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-[#475569] uppercase tracking-wide block mb-1.5">Color</label>
+                        <div class="flex gap-2">
+                            ${PROJECT_COLORS.map((c) => `
+                                <button type="button" data-action="pick-project-color" data-color="${c}" title="${c}"
+                                    class="w-7 h-7 rounded-full border-2 transition-transform ${state.newProjectColor === c ? 'border-[#1E293B] scale-110' : 'border-transparent'}"
+                                    style="background:${c}"></button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-[#475569] uppercase tracking-wide block mb-1.5">Deadline</label>
+                        <input name="deadline" type="date"
+                            class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#1E293B] outline-none focus:ring-2 focus:ring-[#0BC5C1]/30 focus:border-[#0BC5C1] bg-white" />
+                    </div>
+                    ${state.newProjectError ? `<p class="text-xs text-red-500 flex items-center gap-1"><span>⚠</span>${escapeHtml(state.newProjectError)}</p>` : ''}
+                    <div class="flex gap-3 justify-end pt-1">
+                        <button type="button" data-action="close-new-project" class="px-5 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#64748B] hover:bg-[#F8FAFC]">Cancel</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0BC5C1] text-white text-sm font-semibold hover:bg-[#0AAEAA]">Create Project</button>
+                    </div>
+                </form>
             </div>
         </div>
     `;

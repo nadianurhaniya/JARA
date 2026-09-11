@@ -16,6 +16,9 @@ const state = {
     newTaskError: null,
     removeTarget: null,
     deleteProjectConfirm: false,
+    newProjectModal: false,
+    newProjectError: null,
+    newProjectColor: '#0BC5C1',
     toast: null,
 };
 
@@ -369,12 +372,63 @@ export function deleteProject() {
     state.deleteProjectConfirm = false;
     state.inviteModal = false;
     state.newTaskModal = false;
+    state.newProjectModal = false;
     state.removeTarget = null;
     emit();
     toast(`Proyek "${deletedName}" dihapus.`, 'success');
 }
 
 // --- Task & project helpers --------------------------------------------
+
+export function openNewProjectModal() {
+    state.newProjectModal = true;
+    state.newProjectError = null;
+    state.newProjectColor = '#0BC5C1';
+    emit();
+}
+
+export function closeNewProjectModal() {
+    state.newProjectModal = false;
+    state.newProjectError = null;
+    emit();
+}
+
+export function setNewProjectColor(color) {
+    state.newProjectColor = color;
+    emit();
+}
+
+export function createProject({ name, description, deadline }) {
+    if (!state.currentUserId) {
+        toast('Pilih user demo terlebih dahulu.');
+        return;
+    }
+
+    if (!name.trim()) {
+        state.newProjectError = 'Nama proyek wajib diisi.';
+        emit();
+        return;
+    }
+
+    const project = {
+        id: `p${Date.now()}`,
+        name: name.trim(),
+        description: description.trim(),
+        color: state.newProjectColor,
+        ownerId: state.currentUserId,
+        members: [{ userId: state.currentUserId, role: 'owner', joinedAt: new Date().toISOString().slice(0, 10) }],
+        invitations: [],
+        createdAt: new Date().toISOString().slice(0, 10),
+        deadline: deadline || '',
+    };
+    state.projects.push(project);
+    state.activeProjectId = project.id;
+    state.activeTab = 'members';
+    state.newProjectModal = false;
+    state.newProjectError = null;
+    emit();
+    toast(`Proyek "${project.name}" dibuat.`, 'success');
+}
 
 export function openNewTaskModal() {
     state.newTaskModal = true;
@@ -432,6 +486,7 @@ export function setActiveProject(projectId) {
     state.activeTab = 'members';
     state.inviteModal = false;
     state.newTaskModal = false;
+    state.newProjectModal = false;
     state.removeTarget = null;
     state.deleteProjectConfirm = false;
     emit();
