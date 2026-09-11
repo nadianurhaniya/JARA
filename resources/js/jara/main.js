@@ -106,6 +106,16 @@ document.body.addEventListener('click', (event) => {
         case 'confirm-remove':
             actions.removeMember();
             break;
+        case 'open-delete-project':
+            actions.openDeleteProjectConfirm();
+            break;
+        case 'close-delete-project':
+            if (stop) return;
+            actions.closeDeleteProjectConfirm();
+            break;
+        case 'confirm-delete-project':
+            actions.deleteProject();
+            break;
         case 'respond-invite':
             actions.respondInvitation(target.dataset.invite, target.dataset.accept === '1');
             break;

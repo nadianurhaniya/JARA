@@ -117,11 +117,18 @@ function renderProjectMain(project) {
                     <p class="text-xs text-[#94A3B8] mt-0.5">${escapeHtml(project.description)}</p>
                 </div>
                 ${isOwner(project.id) ? `
-                    <button data-action="open-invite"
-                        class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0BC5C1] text-white text-xs font-semibold hover:bg-[#0AAEAA]">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8M19 8v6M22 11h-6"/></svg>
-                        Invite Member
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button data-action="open-invite"
+                            class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0BC5C1] text-white text-xs font-semibold hover:bg-[#0AAEAA]">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8M19 8v6M22 11h-6"/></svg>
+                            Invite Member
+                        </button>
+                        <button data-action="open-delete-project" title="Hapus proyek"
+                            class="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#FECACA] text-red-500 text-xs font-semibold hover:bg-red-50">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+                            <span class="hidden sm:inline">Delete</span>
+                        </button>
+                    </div>
                 ` : ''}
             </div>
 
@@ -364,6 +371,7 @@ export function renderModals() {
         ${state.inviteModal ? renderInviteModal(project) : ''}
         ${state.newTaskModal ? renderNewTaskModal() : ''}
         ${state.removeTarget ? renderRemoveModal(project) : ''}
+        ${state.deleteProjectConfirm ? renderDeleteProjectModal(project) : ''}
     `;
 }
 
@@ -487,6 +495,28 @@ function renderRemoveModal(project) {
                 <div class="flex gap-3">
                     <button data-action="close-remove" class="flex-1 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#64748B] hover:bg-[#F8FAFC]">Cancel</button>
                     <button data-action="confirm-remove" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderDeleteProjectModal(project) {
+    const taskCount = getState().tasks.filter((t) => t.projectId === project.id).length;
+
+    return `
+        <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" data-action="close-delete-project">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" data-stop>
+                <div class="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-3">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" class="w-6 h-6"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+                </div>
+                <h3 class="font-display font-bold text-lg text-[#1E293B] text-center mb-1">Hapus Proyek</h3>
+                <p class="text-sm text-[#64748B] text-center mb-6">
+                    Hapus proyek <strong class="text-[#1E293B]">${escapeHtml(project.name)}</strong> beserta ${taskCount} task di dalamnya? Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <div class="flex gap-3">
+                    <button data-action="close-delete-project" class="flex-1 py-2.5 rounded-xl border border-[#E2E8F0] text-sm text-[#64748B] hover:bg-[#F8FAFC]">Cancel</button>
+                    <button data-action="confirm-delete-project" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600">Delete</button>
                 </div>
             </div>
         </div>

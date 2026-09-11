@@ -15,6 +15,7 @@ const state = {
     newTaskModal: false,
     newTaskError: null,
     removeTarget: null,
+    deleteProjectConfirm: false,
     toast: null,
 };
 
@@ -338,6 +339,41 @@ export function changeTaskStatus(taskId, status) {
     emit();
 }
 
+// --- FR-24: Delete project (owner only) ----------------------------------
+
+export function openDeleteProjectConfirm() {
+    state.deleteProjectConfirm = true;
+    emit();
+}
+
+export function closeDeleteProjectConfirm() {
+    state.deleteProjectConfirm = false;
+    emit();
+}
+
+export function deleteProject() {
+    const project = state.projects.find((p) => p.id === state.activeProjectId);
+    if (!project) return;
+
+    if (project.ownerId !== state.currentUserId) {
+        toast('Hanya Owner yang dapat menghapus proyek.');
+        return;
+    }
+
+    const deletedName = project.name;
+    state.projects = state.projects.filter((p) => p.id !== project.id);
+    state.tasks = state.tasks.filter((t) => t.projectId !== project.id);
+
+    state.activeProjectId = visibleProjects()[0]?.id ?? null;
+    state.activeTab = 'members';
+    state.deleteProjectConfirm = false;
+    state.inviteModal = false;
+    state.newTaskModal = false;
+    state.removeTarget = null;
+    emit();
+    toast(`Proyek "${deletedName}" dihapus.`, 'success');
+}
+
 // --- Task & project helpers --------------------------------------------
 
 export function openNewTaskModal() {
@@ -397,6 +433,7 @@ export function setActiveProject(projectId) {
     state.inviteModal = false;
     state.newTaskModal = false;
     state.removeTarget = null;
+    state.deleteProjectConfirm = false;
     emit();
 }
 
