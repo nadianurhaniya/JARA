@@ -34,7 +34,7 @@
                 <p class="text-sm text-[#64748B] mt-1">Lihat proyek, kelola anggota, undangan, dan assignment tugas.</p>
             </div>
             <a
-                href="{{ route('teamcollaboration.app') }}"
+                href="{{ route('collaborations.app') }}"
                 class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0BC5C1] text-white text-sm font-semibold hover:bg-[#0AAEAA] shrink-0"
             >
                 Buka Kolaborasi
