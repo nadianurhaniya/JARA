@@ -95,13 +95,5 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 
 **Output yang diharapkan:** dashboard analitik, grafik progres, laporan ringkasan tugas per user/proyek.
 
-### Kebutuhan Non-Fungsional
 
-| ID | Kebutuhan |
-|---|---|
-| NFR-01 | Aplikasi berbasis web, responsif untuk desktop dan mobile browser |
-| NFR-02 | Waktu respon sistem maksimal 2 detik untuk operasi umum |
-| NFR-03 | Data pengguna harus terenkripsi (password hashing) |
-| NFR-04 | Sistem harus mendukung minimal 100 pengguna aktif secara bersamaan |
-| NFR-05 | Sistem harus memiliki backup data berkala |
 
