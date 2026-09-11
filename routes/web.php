@@ -35,24 +35,6 @@ Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::prefix('jara')->name('jara.')->group(function () {
-        Route::get('/', function () {
-            return view('jara.app');
-        })->name('app');
-
-        Route::get('/members', function () {
-            return view('jara.app', ['tab' => 'members']);
-        })->name('members');
-
-        Route::get('/invitations', function () {
-            return view('jara.app', ['tab' => 'invitations']);
-        })->name('invitations');
-
-        Route::get('/tasks', function () {
-            return view('jara.app', ['tab' => 'tasks']);
-        })->name('tasks');
-    });
-
     Route::resource('task-lists', TaskListController::class)->except('show');
 
     Route::resource('task-lists.tasks', TaskController::class)
