@@ -1,1 +1,1 @@
-//
+import './jara/main.js';
