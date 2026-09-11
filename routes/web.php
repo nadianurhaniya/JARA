@@ -35,23 +35,30 @@ Route::middleware('auth')->group(function (): void {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::prefix('jara')->name('jara.')->group(function () {
-        Route::get('/', function () {
-            return view('jara.app');
-        })->name('app');
+    // Canonical route untuk Team Collaboration: /collaborations
+    // /jara dipertahankan sebagai alias agar test & link lama tidak rusak
+    foreach ([
+        ['prefix' => 'collaborations', 'name' => 'collaborations.'],
+        ['prefix' => 'jara', 'name' => 'jara.'],
+    ] as $cfg) {
+        Route::prefix($cfg['prefix'])->name($cfg['name'])->group(function () {
+            Route::get('/', function () {
+                return view('jara.app');
+            })->name('app');
 
-        Route::get('/members', function () {
-            return view('jara.app', ['tab' => 'members']);
-        })->name('members');
+            Route::get('/members', function () {
+                return view('jara.app', ['tab' => 'members']);
+            })->name('members');
 
-        Route::get('/invitations', function () {
-            return view('jara.app', ['tab' => 'invitations']);
-        })->name('invitations');
+            Route::get('/invitations', function () {
+                return view('jara.app', ['tab' => 'invitations']);
+            })->name('invitations');
 
-        Route::get('/tasks', function () {
-            return view('jara.app', ['tab' => 'tasks']);
-        })->name('tasks');
-    });
+            Route::get('/tasks', function () {
+                return view('jara.app', ['tab' => 'tasks']);
+            })->name('tasks');
+        });
+    }
 
     Route::resource('task-lists', TaskListController::class)->except('show');
 

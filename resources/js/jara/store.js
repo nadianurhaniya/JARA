@@ -69,8 +69,21 @@ function resolveSessionUser() {
     return 'u-session';
 }
 
-state.currentUserId = resolveSessionUser();
-state.activeProjectId = visibleProjects()[0]?.id ?? null;
+function initSession() {
+    const resolved = resolveSessionUser();
+    if (resolved) {
+        state.currentUserId = resolved;
+    }
+    state.activeProjectId = visibleProjects()[0]?.id ?? null;
+}
+
+initSession();
+
+export function ensureSession() {
+    if (!state.currentUserId) {
+        initSession();
+    }
+}
 
 function emit() {
     listeners.forEach((fn) => fn(state));
