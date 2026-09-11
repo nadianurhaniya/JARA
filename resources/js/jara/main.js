@@ -65,12 +65,19 @@ function escapeHtml(value) {
 subscribe(render);
 render();
 
+// Klik pada backdrop (di luar konten modal) selalu menutup modal.
+// Klik di dalam konten hanya menutup bila menekan kontrol eksplisit
+// (tombol/link), bukan saat menekan teks atau area kosong konten.
+function shouldCloseModal(event, target) {
+    if (!event.target.closest('[data-stop]')) return true;
+    return target.matches('button, a, input, select, textarea, [role="button"]');
+}
+
 document.body.addEventListener('click', (event) => {
     const target = event.target.closest('[data-action]');
     if (!target) return;
 
     const action = target.dataset.action;
-    const stop = target.closest('[data-stop]');
 
     switch (action) {
         case 'toggle-notif':
@@ -90,7 +97,7 @@ document.body.addEventListener('click', (event) => {
             actions.openInviteModal();
             break;
         case 'close-invite':
-            if (stop) return;
+            if (!shouldCloseModal(event, target)) return;
             actions.closeInviteModal();
             break;
         case 'pick-invite':
@@ -103,7 +110,7 @@ document.body.addEventListener('click', (event) => {
             actions.openRemoveConfirm(target.dataset.user);
             break;
         case 'close-remove':
-            if (stop) return;
+            if (!shouldCloseModal(event, target)) return;
             actions.closeRemoveConfirm();
             break;
         case 'confirm-remove':
@@ -113,7 +120,7 @@ document.body.addEventListener('click', (event) => {
             actions.openDeleteProjectConfirm();
             break;
         case 'close-delete-project':
-            if (stop) return;
+            if (!shouldCloseModal(event, target)) return;
             actions.closeDeleteProjectConfirm();
             break;
         case 'confirm-delete-project':
@@ -129,14 +136,14 @@ document.body.addEventListener('click', (event) => {
             actions.openNewTaskModal();
             break;
         case 'close-new-task':
-            if (stop) return;
+            if (!shouldCloseModal(event, target)) return;
             actions.closeNewTaskModal();
             break;
         case 'open-new-project':
             actions.openNewProjectModal();
             break;
         case 'close-new-project':
-            if (stop) return;
+            if (!shouldCloseModal(event, target)) return;
             actions.closeNewProjectModal();
             break;
         case 'pick-project-color':
