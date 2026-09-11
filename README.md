@@ -47,8 +47,6 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 | FR-07 | Sistem harus membedakan hak akses (role) antara Admin dan User biasa |
 | FR-08 | Sistem harus mencatat log aktivitas admin terkait manajemen akun (opsional, untuk audit) |
 
-**Output yang diharapkan:** modul login/register, halaman admin panel untuk manajemen pengguna, sistem role & permission (RBAC).
-
 ### Modul Manajemen Tugas & Daftar/Proyek
 
 | ID | Kebutuhan Fungsional |
@@ -64,8 +62,6 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 | FR-17 | Sistem harus menampilkan tugas terurut berdasarkan prioritas dan/atau tenggat waktu |
 | FR-18 | Sistem harus memberi notifikasi/pengingat saat tenggat waktu tugas mendekat (opsional) |
 
-**Output yang diharapkan:** CRUD daftar/proyek dan tugas, fitur sorting/filtering, fitur reminder.
-
 ### Modul Kolaborasi & Kepemilikan
 
 | ID | Kebutuhan Fungsional |
@@ -79,8 +75,6 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 | FR-25 | Sistem harus menampilkan daftar anggota beserta perannya dalam suatu proyek |
 | FR-26 | Sistem harus mengirim notifikasi saat pengguna ditambahkan/ditugaskan ke suatu tugas |
 
-**Output yang diharapkan:** fitur invite/share proyek, sistem assignment tugas, manajemen hak akses kolaborator.
-
 ### Modul Monitoring Progres & Dashboard
 
 | ID | Kebutuhan Fungsional |
@@ -93,7 +87,7 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 | FR-32 | Sistem harus menampilkan visualisasi progres (grafik/chart) untuk memudahkan pemantauan |
 | FR-33 | Sistem dapat mengekspor laporan progres (opsional: PDF/Excel) |
 
-**Output yang diharapkan:** dashboard analitik, grafik progres, laporan ringkasan tugas per user/proyek.
+
 
 
 
