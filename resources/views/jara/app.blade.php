@@ -10,6 +10,13 @@
     <body class="bg-[#F0FAFA] text-[#1E293B]">
         <div id="jara-app"></div>
 
+        <script>
+            window.JARA_SESSION_USER = @json([
+                'name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+            ]);
+        </script>
+
         <noscript>
             <div class="p-6 text-center text-sm text-[#64748B]">
                 JARA membutuhkan JavaScript untuk berjalan.

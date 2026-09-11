@@ -9,6 +9,8 @@ test('pengguna yang login dapat mengakses halaman kolaborasi /jara', function ()
 
     $response->assertOk();
     $response->assertSee('jara-app');
+    $response->assertSee('JARA_SESSION_USER', false);
+    $response->assertSee($user->email, false);
 });
 
 test('tamu diarahkan ke halaman login saat mengakses /jara', function () {

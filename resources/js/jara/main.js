@@ -2,14 +2,23 @@ import { subscribe, getState } from './store.js';
 
 import * as actions from './store.js';
 import { renderCollaborationLayout, renderModals } from './collaboration.js';
-import { renderAuthPage, renderSidebar, renderHeader, stateUI } from './ui.js';
+import { renderSidebar, renderHeader, stateUI } from './ui.js';
 
 const root = document.getElementById('jara-app');
 
 function render() {
     const state = getState();
+
     if (!state.currentUserId) {
-        root.innerHTML = renderAuthPage();
+        root.innerHTML = `
+            <div class="min-h-screen flex items-center justify-center bg-[#F0FAFA] p-6">
+                <div class="text-center">
+                    <p class="font-display font-bold text-[#1E293B]">Sesi tidak ditemukan</p>
+                    <p class="text-sm text-[#94A3B8] mt-1">Silakan login kembali untuk membuka kolaborasi.</p>
+                    <a href="/login" class="mt-4 inline-block px-4 py-2 rounded-xl bg-[#0BC5C1] text-white text-sm font-semibold hover:bg-[#0AAEAA]">Ke Halaman Login</a>
+                </div>
+            </div>
+        `;
         return;
     }
 
@@ -64,12 +73,6 @@ document.body.addEventListener('click', (event) => {
     const stop = target.closest('[data-stop]');
 
     switch (action) {
-        case 'login':
-            actions.login(target.dataset.user);
-            break;
-        case 'logout':
-            actions.logout();
-            break;
         case 'toggle-notif':
             stateUI.notifOpen = !stateUI.notifOpen;
             render();

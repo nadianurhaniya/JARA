@@ -24,6 +24,47 @@ const state = {
 
 const listeners = new Set();
 
+function sessionUser() {
+    return typeof window !== 'undefined' ? (window.JARA_SESSION_USER ?? null) : null;
+}
+
+function initials(name) {
+    return String(name ?? '?')
+        .trim()
+        .split(/\s+/)
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+}
+
+// Samakan akun Laravel yang login dengan mock user berdasarkan email.
+// Jika tidak cocok (mis. user baru hasil registrasi), buatkan identitas
+// session agar langsung masuk aplikasi dengan daftar proyek kosong.
+function resolveSessionUser() {
+    const session = sessionUser();
+    if (!session?.email) return null;
+
+    const email = String(session.email).toLowerCase();
+    const matched = state.users.find((u) => u.email.toLowerCase() === email);
+    if (matched) return matched.id;
+
+    state.users.push({
+        id: 'u-session',
+        name: session.name || session.email,
+        email: session.email,
+        role: 'user',
+        status: 'active',
+        avatar: initials(session.name || session.email),
+        joinedAt: new Date().toISOString().slice(0, 10),
+        lastActive: new Date().toISOString().slice(0, 10),
+    });
+    return 'u-session';
+}
+
+state.currentUserId = resolveSessionUser();
+state.activeProjectId = visibleProjects()[0]?.id ?? null;
+
 function emit() {
     listeners.forEach((fn) => fn(state));
 }
@@ -84,24 +125,6 @@ function toast(message, kind = 'error') {
         state.toast = null;
         emit();
     }, 4000);
-}
-
-// --- Auth (demo user switcher) -----------------------------------------
-
-export function login(userId) {
-    const user = getUser(userId);
-    if (!user) return;
-    state.currentUserId = userId;
-    const userProjects = visibleProjects();
-    if (userProjects.length) {
-        state.activeProjectId = userProjects[0].id;
-    }
-    emit();
-}
-
-export function logout() {
-    state.currentUserId = null;
-    emit();
 }
 
 // --- FR-19: Invite member (owner only) ---------------------------------

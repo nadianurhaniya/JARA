@@ -1,5 +1,5 @@
 import {
-    getState, getUser, currentUser, projectRole, isOwner, visibleProjects,
+    getState, currentUser, projectRole,
 } from './store.js';
 
 export function escapeHtml(value) {
@@ -57,90 +57,6 @@ export function inviteBadge(status) {
 }
 
 // --------------------------------------------------------------------------
-// Auth page — login sebagai user demo
-// --------------------------------------------------------------------------
-
-export function renderAuthPage() {
-    const { users } = getState();
-    const demoUsers = ['u2', 'u3', 'u5', 'u6', 'u7'];
-
-    return `
-        <div class="min-h-screen bg-[#F0FAFA] flex">
-            <div class="hidden lg:flex flex-col w-[420px] bg-[#0BC5C1] p-10 relative overflow-hidden shrink-0">
-                <div class="absolute inset-0 opacity-10">
-                    <div class="absolute top-10 left-10 w-40 h-40 rounded-full bg-white"></div>
-                    <div class="absolute bottom-20 right-5 w-64 h-64 rounded-full bg-white"></div>
-                    <div class="absolute top-1/2 left-1/4 w-20 h-20 rounded-full bg-white"></div>
-                </div>
-                <div class="relative z-10 flex-1 flex flex-col justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white font-bold text-lg">J</div>
-                        <span class="font-display font-extrabold text-2xl text-white">JARA</span>
-                    </div>
-                    <div>
-                        <h2 class="font-display font-extrabold text-3xl text-white leading-tight mb-4">Kelola tugas.<br />Berkolaborasi dengan tim.</h2>
-                        <p class="text-white/80 text-sm leading-relaxed">JARA membantu kamu mengorganisasi proyek, melacak deadline, dan berkolaborasi dengan tim — semua dalam satu tempat.</p>
-                        <div class="mt-8 space-y-3">
-                            ${['Buat & kelola proyek', 'Tangani undangan kolaborasi', 'Berbagi tugas dengan member', 'Pantau notifikasi'].map((f) => `
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" class="w-3 h-3"><path d="M20 6L9 17l-5-5"/></svg>
-                                    </div>
-                                    <span class="text-white/90 text-sm">${f}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <p class="text-white/50 text-xs">© 2026 JARA. All rights reserved.</p>
-                </div>
-            </div>
-
-            <div class="flex-1 flex items-center justify-center p-6 overflow-y-auto">
-                <div class="w-full max-w-md">
-                    <div class="lg:hidden flex items-center gap-2 justify-center mb-8">
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style="background:#0BC5C1">J</div>
-                        <span class="font-display font-extrabold text-2xl text-[#1E293B]">JARA</span>
-                    </div>
-
-                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-[#E2E8F0]">
-                        <div class="mb-6">
-                            <h2 class="font-display font-extrabold text-2xl text-[#1E293B]">Collaboration Demo</h2>
-                            <p class="text-sm text-[#64748B] mt-1">Pilih user untuk mengeksplorasi modul Kolaborasi & Kepemilikan</p>
-                        </div>
-
-                        <p class="text-xs font-semibold text-[#475569] uppercase tracking-wide mb-2">Akun demo</p>
-                        <div class="space-y-2 mb-6">
-                            ${demoUsers.map((id) => {
-                                const user = getUser(id);
-                                const role = id === 'u2' ? 'Owner' : 'Member';
-                                return `
-                                    <button data-action="login" data-user="${id}"
-                                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-[#E2E8F0] hover:border-[#0BC5C1] hover:bg-[#E8F9F9] text-left transition-all group">
-                                        ${avatar(user, 'w-9 h-9 text-xs')}
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-[#1E293B] truncate">${escapeHtml(user.name)}</p>
-                                            <p class="text-xs text-[#94A3B8] truncate">${escapeHtml(user.email)}</p>
-                                        </div>
-                                        <span class="text-xs px-2 py-0.5 rounded-full font-medium ${role === 'Owner' ? 'bg-[#FEF3C7] text-[#D97706]' : 'bg-[#E8F9F9] text-[#0BC5C1]'}">${role}</span>
-                                    </button>
-                                `;
-                            }).join('')}
-                        </div>
-
-                        <div class="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                            <p class="text-xs text-[#64748B] leading-relaxed">
-                                Gunakan <strong class="text-[#1E293B]">Budi Hartono</strong> (Owner) untuk menguji undang/hapus member, assignment, dan notifikasi.
-                                Gunakan <strong class="text-[#1E293B]">Farah Nadia</strong> untuk menerima/menolak undangan.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// --------------------------------------------------------------------------
 // App shell — sidebar, header, notifications, role bar
 // --------------------------------------------------------------------------
 
@@ -165,6 +81,11 @@ export function renderSidebar() {
                         <span class="hidden md:block">Team</span>
                         <span class="hidden md:block ml-auto w-1.5 h-1.5 rounded-full bg-[#0BC5C1]"></span>
                     </div>
+                    <a href="/dashboard"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[#64748B] hover:bg-[#F8FAFC]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 shrink-0"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                        <span class="hidden md:block">Dashboard</span>
+                    </a>
                 </div>
             </nav>
 
@@ -187,9 +108,12 @@ export function renderSidebar() {
 function projectRoleName() {
     const user = currentUser();
     if (!user) return '';
+    const { activeProjectId } = getState();
+    const role = activeProjectId ? projectRole(activeProjectId, user.id) : null;
+    if (role === 'owner') return 'Owner';
+    if (role === 'member') return 'Member';
     if (user.role === 'admin') return 'Administrator';
-    const ownsProject = getState().projects.some((p) => p.ownerId === user.id);
-    return ownsProject ? 'Owner' : 'Member';
+    return 'Member';
 }
 
 export function renderHeader(activeProject) {
