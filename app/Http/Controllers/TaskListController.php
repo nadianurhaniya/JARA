@@ -19,6 +19,8 @@ class TaskListController extends Controller
      */
     public function index(Request $request): View
     {
+        Gate::authorize('viewAny', TaskList::class);
+
         $taskLists = $request->user()
             ->taskLists()
             ->withCount('tasks')
@@ -33,6 +35,8 @@ class TaskListController extends Controller
      */
     public function create(): View
     {
+        Gate::authorize('create', TaskList::class);
+
         return view('task-lists.create');
     }
 
