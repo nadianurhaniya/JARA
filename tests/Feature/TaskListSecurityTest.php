@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Task;
 use App\Models\TaskList;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -44,6 +45,30 @@ test('parameter route yang bukan id daftar tidak menjalankan penghapusan', funct
     $response->assertNotFound();
     $this->assertModelExists($taskList);
 });
+
+test('payload SQL injection pada parameter pengurutan tidak mengubah query atau data', function (string $sort, string $direction, array $expectedOrder) {
+    $user = User::factory()->create();
+    $taskList = TaskList::factory()->for($user, 'owner')->create();
+    Task::factory()->for($taskList)->for($user, 'owner')->highPriority()->create([
+        'title' => 'Prioritas Tinggi',
+        'due_date' => now()->addDays(5),
+    ]);
+    Task::factory()->for($taskList)->for($user, 'owner')->lowPriority()->create([
+        'title' => 'Tenggat Dekat',
+        'due_date' => now()->addDay(),
+    ]);
+
+    $url = route('task-lists.tasks.index', $taskList, absolute: false)
+        .'?sort='.rawurlencode($sort).'&direction='.rawurlencode($direction);
+    $response = $this->actingAs($user)->get($url);
+
+    $response->assertOk()->assertSeeInOrder($expectedOrder);
+    $this->assertDatabaseCount('tasks', 2);
+    $this->assertModelExists($taskList);
+})->with([
+    'arah berbahaya' => ['due_date', 'desc; DROP TABLE tasks; --', ['Tenggat Dekat', 'Prioritas Tinggi']],
+    'kolom berbahaya' => ["priority; DROP TABLE tasks; --", 'asc', ['Prioritas Tinggi', 'Tenggat Dekat']],
+]);
 
 test('guest tidak dapat membuat atau menghapus daftar', function () {
     $owner = User::factory()->create();
