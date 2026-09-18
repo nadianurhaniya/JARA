@@ -9,14 +9,14 @@
         ],
         [
             'label' => 'Tasks & Projects',
-            'route' => null,
-            'active' => false,
+            'route' => 'task-lists.index',
+            'active' => request()->routeIs('task-lists.*'),
             'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
         ],
         [
             'label' => 'Team Collaboration',
-            'route' => null,
-            'active' => false,
+            'route' => 'collaborations.app',
+            'active' => request()->routeIs(['collaborations.*', 'jara.*']),
             'icon' => 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',
         ],
     ];
@@ -132,16 +132,26 @@
                 </header>
 
                 <main class="flex-1 overflow-y-auto">
+                    <div class="px-4 lg:px-6 pt-4 space-y-3">
+                        @if (session('status'))
+                            <x-alert type="success">{{ session('status') }}</x-alert>
+                        @endif
+
+                        @if ($errors->any())
+                            <x-alert type="error">
+                                <ul class="list-inside list-disc space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </x-alert>
+                        @endif
+                    </div>
+
                     @yield('content')
                 </main>
 
-                <footer class="px-4 py-2 border-t border-[#E2E8F0] bg-white flex items-center justify-between gap-3 shrink-0">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="w-2 h-2 rounded-full shrink-0 {{ $user->is_active ? 'bg-[#10B981]' : 'bg-[#94A3B8]' }}"></span>
-                        <span class="text-xs text-[#94A3B8] truncate">
-                            Logged in as <strong class="text-[#64748B]">{{ $user->name }}</strong> · {{ $user->isAdmin() ? 'Administrator' : 'Member' }}
-                        </span>
-                    </div>
+                <footer class="px-4 py-2 border-t border-[#E2E8F0] bg-white flex items-center justify-end gap-3 shrink-0">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-xs text-[#94A3B8] hover:text-red-500 flex items-center gap-1">

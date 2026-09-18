@@ -87,7 +87,29 @@ JARA adalah aplikasi web advanced to-do list untuk mengelola tugas pribadi maupu
 | FR-32 | Sistem harus menampilkan visualisasi progres (grafik/chart) untuk memudahkan pemantauan |
 | FR-33 | Sistem dapat mengekspor laporan progres (opsional: PDF/Excel) |
 
+---
 
+## Akun dari DatabaseSeeder
 
+Akun berikut dibuat otomatis melalui `DatabaseSeeder` (menggunakan `UserFactory`). Semua akun menggunakan password yang sama: `password`.
 
+| Email | Password |
+|---|---|
+| admin@jara.app | password |
+| budi@jara.app | password |
+| citra@jara.app | password |
+| dian@jara.app | password |
 
+**Catatan:**
+- Data ini adalah data seed untuk kebutuhan development. Jika database direset (`php artisan migrate:fresh --seed`), akun-akun ini akan dibuat ulang.
+- Akun `dian@jara.app` sengaja dibuat berstatus nonaktif, digunakan untuk menguji bahwa sistem menolak login dari akun yang nonaktif.
+- Akun yang dibuat melalui registrasi mandiri menggunakan password yang diisi sendiri oleh pengguna saat mendaftar, bukan password default di atas.
+
+## Alur Kerja Singkat per Fitur
+
+| Branch | Alur Singkat |
+|---|---|
+| `feature/auth-account` | Registrasi → Login → Verifikasi peran → Admin kelola akun pengguna |
+| `feature/task-list-management` | Buat daftar/proyek → Tambah tugas → Atur prioritas & deadline → Tandai selesai |
+| `feature/collaboration` | Undang anggota → Anggota terima undangan → Tugaskan ke anggota → Update status tugas |
+| `feature/dashboard` | Hitung status tugas → Tampilkan progres → Filter berdasarkan waktu → Lihat progres tim |

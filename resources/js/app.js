@@ -1,3 +1,5 @@
+import './jara/main.js';
+
 const onReady = (callback) => {
     if (document.readyState !== 'loading') {
         callback();
