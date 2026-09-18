@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskListRequest;
 use App\Http\Requests\UpdateTaskListRequest;
+use App\Models\ActivityLog;
 use App\Models\TaskList;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class TaskListController extends Controller
@@ -66,12 +68,24 @@ class TaskListController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * Penghapusan berjalan dalam satu transaksi database bersamaan dengan
+     * pencatatan activity log. Tasks, subtasks, dan membership dihapus
+     * lewat FK cascade (ON DELETE CASCADE) agar tidak ada data orphan.
      */
-    public function destroy(TaskList $taskList): RedirectResponse
+    public function destroy(Request $request, TaskList $taskList): RedirectResponse
     {
         Gate::authorize('delete', $taskList);
 
-        $taskList->delete();
+        DB::transaction(function () use ($request, $taskList): void {
+            $taskList->delete();
+
+            ActivityLog::create([
+                'user_id' => $request->user()->id,
+                'action' => 'task_list.deleted',
+                'description' => "Daftar/proyek \"{$taskList->name}\" beserta seluruh isinya dihapus.",
+            ]);
+        });
 
         return redirect()->route('task-lists.index')->with('status', 'Daftar/proyek berhasil dihapus.');
     }
