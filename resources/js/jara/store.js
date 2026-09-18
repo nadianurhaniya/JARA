@@ -1,5 +1,12 @@
 import { USERS, PROJECTS, TASKS, NOTIFICATIONS } from './mock.js';
 
+const TABS = ['members', 'invitations', 'tasks'];
+
+function initialTab() {
+    const tab = typeof window !== 'undefined' ? window.JARA_INITIAL_TAB : null;
+    return TABS.includes(tab) ? tab : 'members';
+}
+
 const state = {
     currentUserId: null,
     users: structuredClone(USERS),
@@ -19,15 +26,9 @@ const state = {
     newProjectModal: false,
     newProjectError: null,
     newProjectColor: '#0BC5C1',
+    newProjectDraft: { name: '', description: '', deadline: '' },
     toast: null,
 };
-
-const TABS = ['members', 'invitations', 'tasks'];
-
-function initialTab() {
-    const tab = typeof window !== 'undefined' ? window.JARA_INITIAL_TAB : null;
-    return TABS.includes(tab) ? tab : 'members';
-}
 
 const listeners = new Set();
 
@@ -181,7 +182,7 @@ export function inviteUser() {
     if (!project) return;
 
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat mengundang anggota.');
+        toast('Hanya Pemilik yang dapat mengundang anggota.');
         return;
     }
 
@@ -191,32 +192,32 @@ export function inviteUser() {
     const target = getUser(userId);
 
     if (!target) {
-        state.inviteError = 'Pilih user yang akan diundang dari daftar.';
+        state.inviteError = 'Pilih pengguna yang akan diundang dari daftar.';
         emit();
         return;
     }
 
-    // Owner tidak dapat mengundang dirinya sendiri
+    // Pemilik tidak dapat mengundang dirinya sendiri
     if (userId === state.currentUserId) {
-        state.inviteError = 'Owner tidak dapat mengundang dirinya sendiri.';
+        state.inviteError = 'Pemilik tidak dapat mengundang dirinya sendiri.';
         emit();
         return;
     }
 
-    // user yang sudah menjadi member tidak dapat diundang lagi
+    // pengguna yang sudah menjadi anggota tidak dapat diundang lagi
     const alreadyMember = project.members.some((m) => m.userId === userId);
     if (alreadyMember) {
-        state.inviteError = `"${target.name}" sudah menjadi member proyek ini.`;
+        state.inviteError = `"${target.name}" sudah menjadi anggota proyek ini.`;
         emit();
         return;
     }
 
-    // user dengan invitation pending tidak bisa menerima undangan duplikat
+    // pengguna dengan undangan tertunda tidak bisa menerima undangan duplikat
     const pendingInvite = project.invitations.some(
         (inv) => inv.userId === userId && inv.status === 'pending',
     );
     if (pendingInvite) {
-        state.inviteError = `"${target.name}" sudah memiliki undangan pending.`;
+        state.inviteError = `"${target.name}" sudah memiliki undangan tertunda.`;
         emit();
         return;
     }
@@ -239,7 +240,7 @@ export function cancelInvitation(invitationId) {
     const project = state.projects.find((p) => p.id === state.activeProjectId);
     if (!project) return;
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat membatalkan undangan.');
+        toast('Hanya Pemilik yang dapat membatalkan undangan.');
         return;
     }
     project.invitations = project.invitations.filter((inv) => inv.id !== invitationId);
@@ -253,15 +254,16 @@ export function respondInvitation(invitationId, accept) {
         const invitation = project.invitations.find((inv) => inv.id === invitationId);
         if (!invitation) continue;
 
-        // hanya user yang menerima invitation yang dapat merespons
+        // hanya pengguna yang menerima undangan yang dapat merespons
         if (invitation.userId !== state.currentUserId) {
             toast('Kamu tidak dapat merespons undangan milik orang lain.');
             return;
         }
 
-        // invitation Accepted/Rejected tidak dapat diproses kembali
+        // undangan yang sudah diterima/ditolak tidak dapat diproses kembali
         if (invitation.status !== 'pending') {
-            toast(`Undangan ini sudah ${invitation.status}.`);
+            const statusLabel = invitation.status === 'accepted' ? 'diterima' : 'ditolak';
+            toast(`Undangan ini sudah ${statusLabel}.`);
             return;
         }
 
@@ -286,7 +288,7 @@ export function respondInvitation(invitationId, accept) {
     toast('Undangan tidak ditemukan.');
 }
 
-// --- FR-20: Remove member (owner only) ---------------------------------
+// --- FR-20: Remove member (hanya pemilik) ---------------------------------
 
 export function openRemoveConfirm(userId) {
     state.removeTarget = userId;
@@ -303,24 +305,24 @@ export function removeMember() {
     if (!project) return;
 
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat menghapus member.');
+        toast('Hanya Pemilik yang dapat menghapus anggota.');
         return;
     }
 
     const userId = state.removeTarget;
     const member = project.members.find((m) => m.userId === userId);
 
-    // Owner tidak dapat menghapus dirinya sendiri
+    // Pemilik tidak dapat menghapus dirinya sendiri
     if (!member || member.role === 'owner') {
-        toast('Owner tidak dapat menghapus dirinya sendiri.');
+        toast('Pemilik tidak dapat menghapus dirinya sendiri.');
         return;
     }
 
     const removedUser = getUser(userId);
-    const removedName = removedUser ? removedUser.name : 'Member';
+    const removedName = removedUser ? removedUser.name : 'Anggota';
     project.members = project.members.filter((m) => m.userId !== userId);
 
-    // assignment tugas milik member menjadi unassigned
+    // penugasan tugas milik anggota menjadi belum ditugaskan
     state.tasks = state.tasks.map((task) =>
         task.projectId === project.id && task.assigneeId === userId
             ? { ...task, assigneeId: null }
@@ -333,7 +335,7 @@ export function removeMember() {
     toast(`"${removedName}" dihapus dari proyek.`, 'success');
 }
 
-// --- FR-22: Assign task (owner only) -----------------------------------
+// --- FR-22: Menugaskan tugas (hanya pemilik) -----------------------------------
 
 export function setAssignee(taskId, assigneeId) {
     const task = state.tasks.find((t) => t.id === taskId);
@@ -342,15 +344,15 @@ export function setAssignee(taskId, assigneeId) {
     if (!project) return;
 
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat menugaskan task.');
+        toast('Hanya Pemilik yang dapat menugaskan tugas.');
         return;
     }
 
     if (assigneeId) {
-        // assignee harus member aktif proyek
+        // penerima tugas harus anggota aktif proyek
         const member = project.members.find((m) => m.userId === assigneeId);
         if (!member) {
-            toast('User tersebut bukan member aktif proyek ini.');
+            toast('Pengguna tersebut bukan anggota aktif proyek ini.');
             return;
         }
     }
@@ -364,7 +366,9 @@ export function setAssignee(taskId, assigneeId) {
     emit();
 }
 
-// --- FR-23: Member mengubah status task --------------------------------
+// --- FR-23: Hanya assignee yang boleh mengubah status tugas -----------------
+// Owner read-only untuk task anggota (monitoring + assignment saja, FR-22).
+// Member hanya boleh mengubah status task yang ditugaskan kepadanya.
 
 export function changeTaskStatus(taskId, status) {
     const task = state.tasks.find((t) => t.id === taskId);
@@ -372,20 +376,17 @@ export function changeTaskStatus(taskId, status) {
     const project = state.projects.find((p) => p.id === task.projectId);
     if (!project) return;
 
-    const role = projectRole(task.projectId, state.currentUserId);
-    if (role !== 'owner') {
-        // member hanya dapat mengubah status task yang ditugaskan kepadanya
-        if (task.assigneeId !== state.currentUserId) {
-            toast('Kamu hanya dapat mengubah status task yang ditugaskan kepadamu.');
-            return;
-        }
+    // Berlaku untuk semua role (owner maupun member): wajib assignee sendiri.
+    if (task.assigneeId !== state.currentUserId) {
+        toast('Kamu hanya dapat mengubah status tugas yang ditugaskan kepadamu.');
+        return;
     }
 
     task.status = status;
     emit();
 }
 
-// --- FR-24: Delete project (owner only) ----------------------------------
+// --- FR-24: Hapus proyek (hanya pemilik) ----------------------------------
 
 export function openDeleteProjectConfirm() {
     state.deleteProjectConfirm = true;
@@ -402,7 +403,7 @@ export function deleteProject() {
     if (!project) return;
 
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat menghapus proyek.');
+        toast('Hanya Pemilik yang dapat menghapus proyek.');
         return;
     }
 
@@ -421,19 +422,27 @@ export function deleteProject() {
     toast(`Proyek "${deletedName}" dihapus.`, 'success');
 }
 
-// --- Task & project helpers --------------------------------------------
+// --- Bantuan tugas & proyek --------------------------------------------
 
 export function openNewProjectModal() {
     state.newProjectModal = true;
     state.newProjectError = null;
     state.newProjectColor = '#0BC5C1';
+    state.newProjectDraft = { name: '', description: '', deadline: '' };
     emit();
 }
 
 export function closeNewProjectModal() {
     state.newProjectModal = false;
     state.newProjectError = null;
+    state.newProjectDraft = { name: '', description: '', deadline: '' };
     emit();
+}
+
+export function setNewProjectDraft(patch) {
+    // Silent update (no emit): called on every keystroke so typing never
+    // triggers a re-render that would steal focus or wipe the form.
+    Object.assign(state.newProjectDraft, patch);
 }
 
 export function setNewProjectColor(color) {
@@ -443,11 +452,18 @@ export function setNewProjectColor(color) {
 
 export function createProject({ name, description, deadline }) {
     if (!state.currentUserId) {
-        toast('Pilih user demo terlebih dahulu.');
+        toast('Pilih pengguna terlebih dahulu.');
         return;
     }
 
-    if (!name.trim()) {
+    const cleanName = String(name ?? '').trim();
+    const cleanDescription = String(description ?? '').trim();
+    const cleanDeadline = String(deadline ?? '');
+
+    // Keep what the user typed so the validation re-render doesn't wipe it.
+    state.newProjectDraft = { name: String(name ?? ''), description: String(description ?? ''), deadline: cleanDeadline };
+
+    if (!cleanName) {
         state.newProjectError = 'Nama proyek wajib diisi.';
         emit();
         return;
@@ -455,20 +471,21 @@ export function createProject({ name, description, deadline }) {
 
     const project = {
         id: `p${Date.now()}`,
-        name: name.trim(),
-        description: description.trim(),
+        name: cleanName,
+        description: cleanDescription,
         color: state.newProjectColor,
         ownerId: state.currentUserId,
         members: [{ userId: state.currentUserId, role: 'owner', joinedAt: new Date().toISOString().slice(0, 10) }],
         invitations: [],
         createdAt: new Date().toISOString().slice(0, 10),
-        deadline: deadline || '',
+        deadline: cleanDeadline,
     };
     state.projects.push(project);
     state.activeProjectId = project.id;
     state.activeTab = 'members';
     state.newProjectModal = false;
     state.newProjectError = null;
+    state.newProjectDraft = { name: '', description: '', deadline: '' };
     emit();
     toast(`Proyek "${project.name}" dibuat.`, 'success');
 }
@@ -490,12 +507,14 @@ export function createTask({ title, priority, deadline }) {
     if (!project) return;
 
     if (project.ownerId !== state.currentUserId) {
-        toast('Hanya Owner yang dapat membuat task.');
+        toast('Hanya Pemilik yang dapat membuat tugas.');
         return;
     }
 
-    if (!title.trim()) {
-        state.newTaskError = 'Judul task wajib diisi.';
+    const cleanTitle = String(title ?? '').trim();
+
+    if (!cleanTitle) {
+        state.newTaskError = 'Judul tugas wajib diisi.';
         emit();
         return;
     }
@@ -503,11 +522,11 @@ export function createTask({ title, priority, deadline }) {
     state.tasks.unshift({
         id: `t${Date.now()}`,
         projectId: project.id,
-        title: title.trim(),
+        title: cleanTitle,
         description: '',
         status: 'not_started',
         priority: priority || 'medium',
-        deadline: deadline || '',
+        deadline: String(deadline ?? ''),
         assigneeId: null,
         subtasks: [],
         createdAt: new Date().toISOString().slice(0, 10),

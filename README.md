@@ -153,7 +153,29 @@ Increment ini melengkapi SRS v1.0 di atas dengan dua kapabilitas inti pengelolaa
 
 > Detail lengkap (acceptance criteria, batas transaksi, kontrak antar-anggota, Definition of Done, matriks traceability, dan skenario uji) tersedia di [`SRS.md`](./SRS.md).
 
+---
 
+## Akun dari DatabaseSeeder
 
+Akun berikut dibuat otomatis melalui `DatabaseSeeder` (menggunakan `UserFactory`). Semua akun menggunakan password yang sama: `password`.
 
+| Email | Password |
+|---|---|
+| admin@jara.app | password |
+| budi@jara.app | password |
+| citra@jara.app | password |
+| dian@jara.app | password |
 
+**Catatan:**
+- Data ini adalah data seed untuk kebutuhan development. Jika database direset (`php artisan migrate:fresh --seed`), akun-akun ini akan dibuat ulang.
+- Akun `dian@jara.app` sengaja dibuat berstatus nonaktif, digunakan untuk menguji bahwa sistem menolak login dari akun yang nonaktif.
+- Akun yang dibuat melalui registrasi mandiri menggunakan password yang diisi sendiri oleh pengguna saat mendaftar, bukan password default di atas.
+
+## Alur Kerja Singkat per Fitur
+
+| Branch | Alur Singkat |
+|---|---|
+| `feature/auth-account` | Registrasi → Login → Verifikasi peran → Admin kelola akun pengguna |
+| `feature/task-list-management` | Buat daftar/proyek → Tambah tugas → Atur prioritas & deadline → Tandai selesai |
+| `feature/collaboration` | Undang anggota → Anggota terima undangan → Tugaskan ke anggota → Update status tugas |
+| `feature/dashboard` | Hitung status tugas → Tampilkan progres → Filter berdasarkan waktu → Lihat progres tim |

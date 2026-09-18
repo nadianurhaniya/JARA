@@ -6,9 +6,14 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubtaskController;
+use App\Http\Controllers\TaskAssignmentController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskListController;
+use App\Http\Controllers\TaskListMemberController;
+use App\Http\Controllers\TaskStatusController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -73,6 +78,19 @@ Route::middleware('auth')->group(function (): void {
     Route::patch('subtasks/{subtask}', [SubtaskController::class, 'update'])->name('subtasks.update');
     Route::patch('subtasks/{subtask}/toggle-complete', [SubtaskController::class, 'toggleComplete'])->name('subtasks.toggle-complete');
     Route::delete('subtasks/{subtask}', [SubtaskController::class, 'destroy'])->name('subtasks.destroy');
+
+    Route::get('task-lists/{taskList}/members', [TaskListMemberController::class, 'index'])->name('task-lists.members.index');
+    Route::delete('task-lists/{taskList}/members/{user}', [TaskListMemberController::class, 'destroy'])->name('task-lists.members.destroy');
+
+    Route::post('task-lists/{taskList}/invitations', [InvitationController::class, 'store'])->name('task-lists.invitations.store');
+    Route::delete('task-lists/{taskList}/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('task-lists.invitations.destroy');
+    Route::patch('invitations/{invitation}', [InvitationController::class, 'update'])->name('invitations.update');
+
+    Route::patch('task-lists/{taskList}/tasks/{task}/assignee', [TaskAssignmentController::class, 'update'])->name('task-lists.tasks.assignee.update');
+    Route::patch('task-lists/{taskList}/tasks/{task}/status', [TaskStatusController::class, 'update'])->name('task-lists.tasks.status.update');
+
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('notifications/{notification}', [NotificationController::class, 'update'])->name('notifications.update');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
