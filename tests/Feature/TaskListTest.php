@@ -82,3 +82,77 @@ test('nama daftar/proyek wajib diisi', function () {
 
     $response->assertSessionHasErrors('name');
 });
+
+test('user mengirim user_id user lain tetap ditetapkan sebagai pemilik sendiri', function () {
+    $userA = User::factory()->create();
+    $userB = User::factory()->create();
+
+    $response = $this->actingAs($userA)->post(route('task-lists.store'), [
+        'name' => 'Proyek Milik A',
+        'description' => 'Deskripsi A',
+        'user_id' => $userB->id,
+    ]);
+
+    $response->assertRedirect(route('task-lists.index'));
+
+    $taskList = TaskList::where('name', 'Proyek Milik A')->firstOrFail();
+
+    expect($taskList->user_id)->toBe($userA->id);
+
+    $this->assertDatabaseHas('task_lists', [
+        'id' => $taskList->id,
+        'user_id' => $userA->id,
+        'name' => 'Proyek Milik A',
+    ]);
+});
+
+test('membuat daftar otomatis membuat baris keanggotaan owner di task_list_user', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('task-lists.store'), [
+        'name' => 'Proyek Dengan Owner Pivot',
+        'description' => 'Cek pivot owner',
+    ]);
+
+    $response->assertRedirect(route('task-lists.index'));
+
+    $taskList = TaskList::where('name', 'Proyek Dengan Owner Pivot')->firstOrFail();
+
+    $this->assertDatabaseHas('task_list_user', [
+        'task_list_id' => $taskList->id,
+        'user_id' => $user->id,
+        'role' => 'owner',
+    ]);
+});
+
+test('name kosong ditolak validasi', function () {
+    $user = User::factory()->create();
+
+    $countBefore = TaskList::count();
+
+    // Konvensi project ini: FormRequest via web (tanpa Accept: application/json)
+    // mengembalikan 302 redirect kembali dengan session errors, bukan 422 JSON.
+    $response = $this->actingAs($user)->post(route('task-lists.store'), [
+        'description' => 'Tanpa nama',
+    ]);
+
+    $response->assertSessionHasErrors('name');
+    expect(TaskList::count())->toBe($countBefore);
+    $this->assertDatabaseCount('task_lists', $countBefore);
+});
+
+test('guest tidak bisa membuat daftar', function () {
+    $countBefore = TaskList::count();
+
+    // Route task-lists.store berada dalam grup middleware('auth'),
+    // sehingga guest mendapat 302 redirect ke route login.
+    $response = $this->post(route('task-lists.store'), [
+        'name' => 'Proyek Guest',
+        'description' => 'Seharusnya ditolak',
+    ]);
+
+    $response->assertRedirect(route('login'));
+    $this->assertGuest();
+    expect(TaskList::count())->toBe($countBefore);
+    $this->assertDatabaseMissing('task_lists', ['name' => 'Proyek Guest']);
+});
