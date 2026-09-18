@@ -81,6 +81,8 @@ class Task extends Model
 
     public function scopeSortByDueDate(Builder $query, string $direction = 'asc'): void
     {
+        $direction = $direction === 'desc' ? 'desc' : 'asc';
+
         $query->orderByRaw('due_date IS NULL')
             ->orderBy('due_date', $direction);
     }

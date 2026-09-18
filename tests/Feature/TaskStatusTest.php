@@ -4,7 +4,7 @@ use App\Models\Task;
 use App\Models\TaskList;
 use App\Models\User;
 
-test('owner dapat mengubah status task di proyeknya', function () {
+test('owner yang tidak ditugaskan tidak dapat mengubah status task', function () {
     $owner = User::factory()->create();
     $taskList = TaskList::factory()->for($owner, 'owner')->create();
     $task = Task::factory()->for($taskList, 'taskList')->for($owner, 'owner')->create([
@@ -16,8 +16,8 @@ test('owner dapat mengubah status task di proyeknya', function () {
         ['is_completed' => true]
     );
 
-    $response->assertOk();
-    expect($task->refresh()->is_completed)->toBeTrue();
+    $response->assertForbidden();
+    expect($task->refresh()->is_completed)->toBeFalse();
 });
 
 test('member dapat mengubah status task yang ditugaskan kepadanya', function () {
