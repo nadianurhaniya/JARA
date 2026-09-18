@@ -2,10 +2,10 @@
 
 use App\Models\User;
 
-test('pengguna yang login dapat mengakses halaman kolaborasi /jara', function () {
+test('pengguna yang login dapat mengakses halaman kolaborasi', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get(route('teamcollaboration.app'));
+    $response = $this->actingAs($user)->get(route('collaborations.app'));
 
     $response->assertOk();
     $response->assertSee('jara-app');
@@ -13,8 +13,8 @@ test('pengguna yang login dapat mengakses halaman kolaborasi /jara', function ()
     $response->assertSee($user->email, false);
 });
 
-test('tamu diarahkan ke halaman login saat mengakses /jara', function () {
-    $response = $this->get(route('teamcollaboration.app'));
+test('tamu diarahkan ke halaman login saat mengakses kolaborasi', function () {
+    $response = $this->get(route('collaborations.app'));
 
     $response->assertRedirect(route('login'));
 });
@@ -23,9 +23,9 @@ test('route tab kolaborasi dapat diakses pengguna yang login', function () {
     $user = User::factory()->create();
 
     $routes = [
-        'teamcollaboration.members' => 'members',
-        'teamcollaboration.invitations' => 'invitations',
-        'teamcollaboration.tasks' => 'tasks',
+        'collaborations.members' => 'members',
+        'collaborations.invitations' => 'invitations',
+        'collaborations.tasks' => 'tasks',
     ];
 
     foreach ($routes as $name => $tab) {
@@ -39,7 +39,7 @@ test('route tab kolaborasi dapat diakses pengguna yang login', function () {
 });
 
 test('tamu diarahkan ke halaman login saat mengakses route tab kolaborasi', function () {
-    foreach (['teamcollaboration.members', 'teamcollaboration.invitations', 'teamcollaboration.tasks'] as $name) {
+    foreach (['collaborations.members', 'collaborations.invitations', 'collaborations.tasks'] as $name) {
         $this->get(route($name))->assertRedirect(route('login'));
     }
 });
@@ -50,5 +50,13 @@ test('sidebar dashboard memuat tautan team collaboration', function () {
     $response = $this->actingAs($user)->get(route('dashboard'));
 
     $response->assertOk();
-    $response->assertSee(route('teamcollaboration.app'), false);
+    $response->assertSee(route('collaborations.app'), false);
+});
+
+test('alias lama /jara tetap membuka halaman kolaborasi', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('jara.app'));
+
+    $response->assertOk()->assertSee('jara-app');
 });
